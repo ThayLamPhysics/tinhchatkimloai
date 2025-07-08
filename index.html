@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài giảng: Tính Chất Của Kim Loại - Thầy Lâm</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* Sử dụng font Be Vietnam Pro cho toàn bộ trang */
+        body {
+            font-family: 'Be Vietnam Pro', sans-serif;
+        }
+
+        /* Hiệu ứng chuyển động mượt mà cho các tab content */
+        .tab-content {
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+        }
+
+        .tab-content.hidden {
+            opacity: 0;
+            transform: translateY(20px);
+            position: absolute;
+            pointer-events: none;
+        }
+        
+        /* Gradient cho nền */
+        .gradient-bg {
+            background: linear-gradient(135deg, #6EE7B7, #FDE68A);
+        }
+
+        .gradient-bg-main {
+            background: linear-gradient(135deg, #f0fdf4, #fefce8);
+        }
+
+        /* (FIXED) Nút Kêu gọi Hành động Chính */
+        .btn-primary {
+            background-image: linear-gradient(to right, #10b981 0%, #059669 51%, #10b981 100%);
+            background-size: 200% auto;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+            border: none;
+        }
+        .btn-primary:hover {
+            background-position: right center;
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.5);
+        }
+        
+        /* (FIXED) Nút Chức năng Phụ */
+        .btn-secondary {
+            background-color: #facc15; /* Màu vàng hổ phách */
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border: none;
+        }
+        .btn-secondary:hover {
+            background-color: #f59e0b;
+            transform: translateY(-2px);
+            box-shadow: 0 7px 14px rgba(245, 158, 11, 0.3);
+        }
+
+        /* Hiệu ứng cho tab đang active */
+        .tab.active {
+            @apply border-emerald-500 bg-emerald-500 text-white;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #86efac;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4ade80;
+        }
+
+        /* Animation cho SVG */
+        @keyframes moveElectron {
+            0% { transform: translate(0, 0); }
+            25% { transform: translate(5px, -10px); }
+            50% { transform: translate(-5px, 10px); }
+            75% { transform: translate(10px, 5px); }
+            100% { transform: translate(0, 0); }
+        }
+        .electron {
+            animation: moveElectron 4s linear infinite;
+        }
+        
+        /* (FIXED) Nút Lựa chọn trong Bài trắc nghiệm */
+        .quiz-option-btn {
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .quiz-option-btn:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            border-color: #34d399;
+        }
+        .quiz-option-btn.correct {
+            background-color: #d1fae5; /* bg-emerald-100 */
+            border-color: #6ee7b7; /* border-emerald-300 */
+            color: #065f46; /* text-emerald-800 */
+        }
+        .quiz-option-btn.incorrect {
+            background-color: #fee2e2; /* bg-red-100 */
+            border-color: #fca5a5; /* border-red-300 */
+            color: #991b1b; /* text-red-800 */
+        }
+
+    </style>
+</head>
+<body class="bg-slate-50">
+
+    <!-- MÀN HÌNH MỞ ĐẦU "BÌA SÁCH" -->
+    <div id="cover-page" class="fixed inset-0 gradient-bg z-50 flex flex-col items-center justify-center p-4 transition-opacity duration-500">
+        <!-- Quảng cáo -->
+        <div id="ad-container" class="absolute top-4 right-4 bg-white p-2 rounded-lg shadow-lg w-64 max-w-xs animate-fade-in">
+            <button id="close-ad-btn" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center font-bold z-10">&times;</button>
+            <img src="https://i.imgur.com/8ZghNiR.png" alt="Quảng cáo" class="rounded-md w-full" onerror="this.onerror=null;this.src='https://placehold.co/256x144/ffffff/c0392b?text=Loi+Tai+Anh';">
+        </div>
+        
+        <div class="text-center text-gray-800">
+            <h1 class="text-4xl md:text-6xl font-bold mb-4" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.1);">Bài Giảng Tương Tác</h1>
+            <h2 class="text-2xl md:text-4xl font-bold text-emerald-700 mb-6" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.1);">Tính Chất Của Kim Loại</h2>
+            <p class="text-lg md:text-xl mb-12">Với Thầy Lâm</p>
+            <button id="start-btn" class="btn-primary inline-flex items-center justify-center text-white font-bold py-4 px-8 rounded-full transition-all duration-300 ease-in-out text-xl">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mr-2" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 0 1 0 1.972l-11.54 6.347a1.125 1.125 0 0 1-1.667-.986V5.653Z" />
+                </svg>
+                Bắt đầu học
+            </button>
+        </div>
+    </div>
+
+    <!-- NỘI DUNG CHÍNH -->
+    <main id="main-content" class="hidden min-h-screen gradient-bg-main">
+        <div class="container mx-auto p-4 md:p-8">
+            <header class="text-center mb-8">
+                <h1 class="text-3xl md:text-4xl font-bold text-emerald-800">Khám Phá Thế Giới Kim Loại</h1>
+                <p class="text-slate-600 mt-2">Cùng Thầy Lâm làm sáng tỏ những bí ẩn nhé!</p>
+            </header>
+
+            <!-- THANH TABS -->
+            <div class="mb-8 flex flex-wrap justify-center border-b-2 border-slate-200">
+                <button class="tab text-lg font-semibold py-3 px-6 border-b-4 border-transparent text-slate-600 hover:bg-emerald-100 transition-colors duration-300 active" data-tab="1">Tính chất vật lý</button>
+                <button class="tab text-lg font-semibold py-3 px-6 border-b-4 border-transparent text-slate-600 hover:bg-emerald-100 transition-colors duration-300" data-tab="2">Tính chất hóa học</button>
+                <button class="tab text-lg font-semibold py-3 px-6 border-b-4 border-transparent text-slate-600 hover:bg-emerald-100 transition-colors duration-300" data-tab="3">Bài tập vận dụng</button>
+            </div>
+
+            <!-- KHỐI NỘI DUNG TABS -->
+            <div class="relative">
+                <!-- Tab 1: Tính chất vật lý -->
+                <div id="tab-content-1" class="tab-content bg-white p-6 md:p-8 rounded-2xl shadow-lg">
+                    <h2 class="text-2xl font-bold text-emerald-700 mb-4">1. Tính chất vật lý chung - "Vẻ ngoài" của kim loại</h2>
+                    <div class="prose max-w-none text-slate-700">
+                        <p>Các em à, hãy tưởng tượng kim loại giống như một "khu tập thể" cực kỳ đông vui và có tổ chức. Mỗi nguyên tử kim loại là một "căn hộ", và trong khu tập thể này có những "cư dân" rất đặc biệt, đó là các electron tự do. Chúng không ở yên trong một căn hộ nào cả mà chạy nhảy, di chuyển tự do khắp nơi. Chính những "cư dân" năng động này đã tạo nên 4 "nét đẹp" đặc trưng cho kim loại đấy!</p>
+                        
+                        <div class="grid md:grid-cols-2 gap-6 mt-6">
+                            <div class="bg-emerald-50 p-4 rounded-lg border-l-4 border-emerald-400">
+                                <h3 class="font-bold text-lg">a. Tính dẻo:</h3>
+                                <p>Khi ta tác dụng lực, các "căn hộ" nguyên tử có thể trượt lên nhau mà không tách rời, vì các "cư dân" electron tự do vẫn luôn ở đó để "kết dính" chúng lại. Giống như khi các em nặn đất sét vậy, rất linh hoạt! Vàng (Au) là "nhà vô địch" về độ dẻo, có thể dát mỏng đến mức ánh sáng xuyên qua được.</p>
+                            </div>
+                            <div class="bg-yellow-50 p-4 rounded-lg border-l-4 border-yellow-400">
+                                <h3 class="font-bold text-lg">b. Tính dẫn điện:</h3>
+                                <p>Khi có một dòng điện (giống như một "hiệu lệnh"), các "cư dân" electron tự do này sẽ đồng loạt di chuyển theo một hướng, tạo thành dòng điện. Bạc (Ag) dẫn điện tốt nhất, nhưng vì đắt nên người ta thường dùng Đồng (Cu) để làm dây điện.</p>
+                            </div>
+                            <div class="bg-sky-50 p-4 rounded-lg border-l-4 border-sky-400">
+                                <h3 class="font-bold text-lg">c. Tính dẫn nhiệt:</h3>
+                                <p>Các electron tự do không chỉ chạy lung tung mà còn "va chạm" và truyền năng lượng cho các "căn hộ" nguyên tử. Vì vậy, khi ta đun nóng một đầu thanh kim loại, đầu kia cũng nhanh chóng nóng lên. Kim loại dẫn nhiệt tốt cũng thường dẫn điện tốt.</p>
+                            </div>
+                            <div class="bg-rose-50 p-4 rounded-lg border-l-4 border-rose-400">
+                                <h3 class="font-bold text-lg">d. Ánh kim:</h3>
+                                <p>Bề mặt kim loại sáng lấp lánh là do các electron tự do đã phản xạ lại hầu hết ánh sáng chiếu tới. Giống như một tấm gương nhỏ vậy!</p>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-8 p-6 bg-slate-100 rounded-lg">
+                            <h3 class="text-xl font-bold text-center mb-4 text-emerald-800">Mô phỏng Mạng tinh thể Kim loại</h3>
+                            <div id="svg-container-1" class="w-full h-64 flex items-center justify-center">
+                                <!-- SVG sẽ được tạo bởi JavaScript -->
+                            </div>
+                            <p class="text-center text-sm text-slate-500 mt-2">Các chấm xanh là ion dương kim loại đứng yên, các chấm vàng là electron tự do di chuyển hỗn loạn.</p>
+                        </div>
+                    </div>
+                    <!-- Góc tương tác AI -->
+                    <div class="mt-10 border-t-2 pt-6">
+                        <h3 class="text-xl font-bold text-emerald-700 mb-3">Góc tương tác cùng Thầy Lâm</h3>
+                        <div class="bg-white p-4 rounded-lg shadow-inner border border-slate-200">
+                            <div id="ai-response-1" class="mb-4 text-slate-700 min-h-[50px] bg-slate-50 p-3 rounded"></div>
+                            <textarea id="ai-prompt-1" class="w-full p-2 border rounded mb-2" placeholder="Các em có câu hỏi gì về tính chất vật lý của kim loại không?"></textarea>
+                            <button onclick="askAI(1)" class="btn-secondary inline-flex items-center justify-center text-gray-800 font-bold py-2 px-6 rounded-md transition-all duration-300 ease-in-out">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                    <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
+                                </svg>
+                                Gửi câu hỏi
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 2: Tính chất hóa học -->
+                <div id="tab-content-2" class="tab-content hidden bg-white p-6 md:p-8 rounded-2xl shadow-lg">
+                    <h2 class="text-2xl font-bold text-yellow-600 mb-4">2. Tính chất hóa học - "Tính cách" của kim loại</h2>
+                    <div class="prose max-w-none text-slate-700">
+                        <p>Nếu tính chất vật lý là "ngoại hình", thì tính chất hóa học chính là "tính cách" đặc trưng của kim loại. Các "chàng hiệp sĩ" kim loại của chúng ta có một tính cách chung là rất "hào phóng" - tức là rất dễ nhường electron để trở thành ion dương (M → M<sup>n+</sup> + ne). Chúng ta hãy cùng xem chàng hiệp sĩ này thể hiện bản lĩnh ra sao khi gặp các đối thủ khác nhau nhé!</p>
+                        
+                        <div class="space-y-6 mt-6">
+                            <!-- Mục A: Tác dụng với phi kim -->
+                            <details class="bg-slate-50 p-4 rounded-lg group" open>
+                                <summary class="font-bold text-lg text-slate-800 cursor-pointer list-none flex justify-between items-center">
+                                    A. Tác dụng với phi kim: Cuộc so tài sức mạnh
+                                    <span class="transform transition-transform duration-300 group-open:rotate-180">▼</span>
+                                </summary>
+                                <div class="mt-4 flex flex-col md:flex-row items-center gap-6">
+                                    <div class="flex-grow">
+                                        <p>Hầu hết kim loại đều có thể "so tài" với các phi kim như oxi, clo, lưu huỳnh... ở nhiệt độ cao. Ví dụ, khi ta đưa một sợi dây sắt (Fe) nóng đỏ vào bình khí clo (Cl₂), nó sẽ cháy sáng, tạo ra khói màu nâu đỏ là sắt(III) clorua (FeCl₃).</p>
+                                        <div class="mt-2 p-3 bg-white rounded-md shadow-sm"><code>2Fe + 3Cl₂ → 2FeCl₃ (nhiệt độ)</code></div>
+                                    </div>
+                                    <div class="flex-shrink-0 mt-4 md:mt-0">
+                                        <button id="open-modal-a-btn" class="btn-primary inline-flex items-center justify-center text-white font-bold py-3 px-8 rounded-full transition-all duration-300 ease-in-out">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                                            </svg>
+                                            Xem thí nghiệm
+                                        </button>
+                                    </div>
+                                </div>
+                            </details>
+
+                            <!-- Mục B: Tác dụng với nước -->
+                            <details class="bg-slate-50 p-4 rounded-lg group">
+                                <summary class="font-bold text-lg text-slate-800 cursor-pointer list-none flex justify-between items-center">
+                                    B. Tác dụng với nước: Ai "bơi" giỏi nhất?
+                                     <span class="transform transition-transform duration-300 group-open:rotate-180">▼</span>
+                                </summary>
+                                <div class="mt-4 flex flex-col md:flex-row items-center gap-6">
+                                    <div class="flex-grow">
+                                        <p>Không phải kim loại nào cũng "thích" nước đâu nhé! Chỉ những kim loại mạnh như Na, K, Ca, Ba mới phản ứng được với nước ở nhiệt độ thường, tạo ra dung dịch bazơ và giải phóng khí hiđro. Giống như thả một viên kẹo sủi vào nước vậy, nó sẽ "chạy" vòng quanh và sủi bọt khí. Ví dụ, Natri (Na) phản ứng rất mãnh liệt:</p>
+                                        <div class="mt-2 p-3 bg-white rounded-md shadow-sm"><code>2Na + 2H₂O → 2NaOH + H₂↑</code></div>
+                                    </div>
+                                    <div class="flex-shrink-0 mt-4 md:mt-0">
+                                        <button id="open-modal-b-btn" class="btn-primary inline-flex items-center justify-center text-white font-bold py-3 px-8 rounded-full transition-all duration-300 ease-in-out">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                                            </svg>
+                                            Xem thí nghiệm
+                                        </button>
+                                    </div>
+                                </div>
+                            </details>
+
+                            <!-- Mục C: Tác dụng với acid -->
+                            <details class="bg-slate-50 p-4 rounded-lg group">
+                                <summary class="font-bold text-lg text-slate-800 cursor-pointer list-none flex justify-between items-center">
+                                    C. Tác dụng với dung dịch acid: Thử thách lòng dũng cảm
+                                     <span class="transform transition-transform duration-300 group-open:rotate-180">▼</span>
+                                </summary>
+                                <div class="mt-4 flex flex-col md:flex-row items-center gap-6">
+                                    <div class="flex-grow">
+                                        <p>Nhiều kim loại đứng trước Hiđro (H) trong dãy hoạt động hóa học có thể "dũng cảm" đẩy H ra khỏi dung dịch acid (như HCl, H₂SO₄ loãng) để tạo thành muối và giải phóng khí H₂. Đây là một trong những phản ứng kinh điển nhất!</p>
+                                        <div class="mt-2 p-3 bg-white rounded-md shadow-sm"><code>Zn + 2HCl → ZnCl₂ + H₂↑</code></div>
+                                        <p class="mt-2 text-sm text-red-600">Lưu ý: Với các acid có tính oxi hóa mạnh như HNO₃ hay H₂SO₄ đặc, kim loại sẽ phản ứng theo cách khác và không giải phóng H₂ đâu nhé!</p>
+                                    </div>
+                                    <div class="flex-shrink-0 mt-4 md:mt-0">
+                                        <button id="open-modal-c-btn" class="btn-primary inline-flex items-center justify-center text-white font-bold py-3 px-8 rounded-full transition-all duration-300 ease-in-out">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                                            </svg>
+                                            Xem thí nghiệm
+                                        </button>
+                                    </div>
+                                </div>
+                            </details>
+
+                            <!-- Mục D: Tác dụng với dung dịch muối -->
+                            <details class="bg-slate-50 p-4 rounded-lg group">
+                                <summary class="font-bold text-lg text-slate-800 cursor-pointer list-none flex justify-between items-center">
+                                    D. Tác dụng với dung dịch muối: "Kẻ mạnh" thay thế "kẻ yếu"
+                                     <span class="transform transition-transform duration-300 group-open:rotate-180">▼</span>
+                                </summary>
+                                <div class="mt-4 flex flex-col md:flex-row items-center gap-6">
+                                    <div class="flex-grow">
+                                        <p>Kim loại hoạt động mạnh hơn (trừ Na, K, Ca...) có thể đẩy kim loại yếu hơn ra khỏi dung dịch muối của nó. Giống như trong một cuộc thi, người khỏe hơn sẽ chiếm lấy vị trí. Ví dụ, khi ngâm một chiếc đinh sắt (Fe) vào dung dịch đồng(II) sunfat (CuSO₄) màu xanh, một lúc sau ta sẽ thấy một lớp màu đỏ của đồng bám trên đinh sắt, và dung dịch nhạt màu dần.</p>
+                                        <div class="mt-2 p-3 bg-white rounded-md shadow-sm"><code>Fe + CuSO₄ → FeSO₄ + Cu↓</code></div>
+                                    </div>
+                                    <div class="flex-shrink-0 mt-4 md:mt-0">
+                                        <button id="open-modal-d-btn" class="btn-primary inline-flex items-center justify-center text-white font-bold py-3 px-8 rounded-full transition-all duration-300 ease-in-out">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                                            </svg>
+                                            Xem thí nghiệm
+                                        </button>
+                                    </div>
+                                </div>
+                            </details>
+                        </div>
+                    </div>
+                        <!-- Góc tương tác AI -->
+                    <div class="mt-10 border-t-2 pt-6">
+                        <h3 class="text-xl font-bold text-yellow-700 mb-3">Góc tương tác cùng Thầy Lâm</h3>
+                        <div class="bg-white p-4 rounded-lg shadow-inner border border-slate-200">
+                            <div id="ai-response-2" class="mb-4 text-slate-700 min-h-[50px] bg-slate-50 p-3 rounded"></div>
+                            <textarea id="ai-prompt-2" class="w-full p-2 border rounded mb-2" placeholder="Các em có thắc mắc gì về 'tính cách' của kim loại không?"></textarea>
+                            <button onclick="askAI(2)" class="btn-secondary inline-flex items-center justify-center text-gray-800 font-bold py-2 px-6 rounded-md transition-all duration-300 ease-in-out">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                    <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
+                                </svg>
+                                Gửi câu hỏi
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 3: Bài tập -->
+                <div id="tab-content-3" class="tab-content hidden bg-white p-6 md:p-8 rounded-2xl shadow-lg">
+                    <!-- Màn hình bắt đầu quiz -->
+                    <div id="quiz-start-screen" class="text-center">
+                        <h2 class="text-2xl font-bold text-emerald-700 mb-4">Bài Tập Vận Dụng</h2>
+                        <p class="text-slate-600 mb-6">Đã đến lúc kiểm tra xem các em đã nắm vững bài học chưa. Hãy nhập tên của mình và bắt đầu nhé!</p>
+                        <input type="text" id="student-name" class="text-center p-3 border-2 border-slate-300 rounded-lg w-full max-w-sm mb-4 focus:border-emerald-500 focus:ring-emerald-500" placeholder="Nhập tên của em vào đây...">
+                        <p id="name-error" class="text-red-500 text-sm mb-4 hidden">Các em ơi, nhớ điền tên của mình vào nhé!</p>
+                        <button id="start-quiz-btn" class="btn-secondary inline-flex items-center justify-center text-gray-800 font-bold py-2 px-6 rounded-md transition-all duration-300 ease-in-out text-lg">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mr-2" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.91 11.672a.375.375 0 0 1 0 .656l-5.603 3.113a.375.375 0 0 1-.557-.328V8.887c0-.286.307-.466.557-.327l5.603 3.112Z" />
+                            </svg>
+                            Bắt đầu kiểm tra
+                        </button>
+                    </div>
+
+                    <!-- Màn hình làm quiz -->
+                    <div id="quiz-container" class="hidden">
+                        <h2 id="question-text" class="text-xl font-bold text-slate-800 mb-6"></h2>
+                        <div id="answers-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- Các nút đáp án sẽ được tạo bởi JS -->
+                        </div>
+                        <div id="feedback" class="mt-4 text-lg font-medium"></div>
+                    </div>
+
+                    <!-- Màn hình kết quả -->
+                    <div id="quiz-results-screen" class="hidden text-center">
+                        <h2 class="text-3xl font-bold text-emerald-700 mb-2">Hoàn thành!</h2>
+                        <p id="result-summary" class="text-xl text-slate-700 font-semibold mb-6"></p>
+                        <div id="result-details" class="text-lg mb-4"></div>
+                        <p id="result-comment" class="text-lg italic text-yellow-700 mb-8 p-4 bg-yellow-50 rounded-lg"></p>
+                        
+                        <!-- Phân tích từ AI -->
+                        <div id="ai-analysis-container" class="mt-8 text-left p-6 bg-slate-50 rounded-lg border border-slate-200">
+                             <h3 class="text-xl font-bold text-emerald-800 mb-4">Phân tích từ Thầy Lâm (AI)</h3>
+                             <div id="ai-analysis-content" class="prose max-w-none text-slate-700">
+                                 <div class="flex items-center justify-center">
+                                     <svg class="animate-spin h-8 w-8 text-emerald-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                     </svg>
+                                     <p class="ml-3">Đang phân tích bài làm của em, chờ thầy một chút nhé...</p>
+                                 </div>
+                             </div>
+                        </div>
+
+                        <button onclick="restartQuiz()" class="btn-secondary inline-flex items-center justify-center text-gray-800 font-bold py-2 px-6 rounded-md transition-all duration-300 ease-in-out mt-8">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0011.664 0l3.181-3.183m-11.664 0l-3.182-3.182m11.664 0l-3.182 3.182m0 0l3.182 3.182" />
+                            </svg>
+                            Làm lại bài
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- MODAL (Cấu trúc dùng chung) -->
+    <div id="modal-simulation" class="hidden fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg w-full h-full max-w-6xl max-h-[90vh] flex flex-col">
+            <div class="flex justify-between items-center p-4 border-b">
+                <h3 id="modal-title" class="font-bold text-lg text-slate-700">Thí nghiệm mô phỏng</h3>
+                <button id="close-modal-btn" class="text-2xl font-bold text-red-500 hover:text-red-700">&times;</button>
+            </div>
+            <div class="flex-grow">
+                <iframe id="modal-iframe" class="w-full h-full border-0" src=""></iframe>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+    // --- KHAI BÁO BIẾN TOÀN CỤC VÀ DOM ELEMENTS ---
+    const coverPage = document.getElementById('cover-page');
+    const mainContent = document.getElementById('main-content');
+    const startBtn = document.getElementById('start-btn');
+    const closeAdBtn = document.getElementById('close-ad-btn');
+    const adContainer = document.getElementById('ad-container');
+
+    const tabs = document.querySelectorAll('.tab');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    const openModalABtn = document.getElementById('open-modal-a-btn');
+    const openModalBBtn = document.getElementById('open-modal-b-btn');
+    const openModalCBtn = document.getElementById('open-modal-c-btn');
+    const openModalDBtn = document.getElementById('open-modal-d-btn');
+    const closeModalBtn = document.getElementById('close-modal-btn');
+    const modal = document.getElementById('modal-simulation');
+    const modalTitle = document.getElementById('modal-title');
+    const modalIframe = document.getElementById('modal-iframe');
+
+    const quizStartScreen = document.getElementById('quiz-start-screen');
+    const studentNameInput = document.getElementById('student-name');
+    const startQuizBtn = document.getElementById('start-quiz-btn');
+    const nameError = document.getElementById('name-error');
+    const quizContainer = document.getElementById('quiz-container');
+    const quizResultsScreen = document.getElementById('quiz-results-screen');
+    const questionText = document.getElementById('question-text');
+    const answersContainer = document.getElementById('answers-container');
+    
+    // IMPORTANT: The API key is left empty. The environment will provide it.
+    const API_KEY = ""; 
+    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx_2S6gnm5SxrZx33qz7KPvttJMZpYw4f5oPonE9dfn0hbEg5XZXE3SxNQatBCTYz1SAw/exec';
+
+    let studentName = '';
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let userAnswers = [];
+
+    // --- DỮ LIỆU BÀI GIẢNG ---
+
+    const quizData = [
+        {
+            question: "Kim loại nào sau đây có tính dẻo nhất?",
+            answers: ["A. Vàng", "B. Bạc", "C. Đồng", "D. Nhôm"],
+            correct: "A. Vàng"
+        },
+        {
+            question: "Dãy kim loại nào sau đây được sắp xếp theo chiều hoạt động hóa học giảm dần?",
+            answers: ["A. K, Na, Mg, Al, Zn, Fe", "B. Fe, Zn, Al, Mg, Na, K", "C. Al, Mg, K, Na, Fe, Zn", "D. Na, K, Mg, Al, Zn, Fe"],
+            correct: "A. K, Na, Mg, Al, Zn, Fe"
+        },
+        {
+            question: "Kim loại nào sau đây tác dụng được với nước ở nhiệt độ thường?",
+            answers: ["A. Sắt (Fe)", "B. Đồng (Cu)", "C. Natri (Na)", "D. Kẽm (Zn)"],
+            correct: "C. Natri (Na)"
+        },
+        {
+            question: "Khi cho Sắt (Fe) tác dụng với dung dịch HCl, sản phẩm thu được là:",
+            answers: ["A. FeCl₃ và H₂", "B. FeCl₂ và H₂", "C. FeCl₃ và H₂O", "D. Fe và H₂O"],
+            correct: "B. FeCl₂ và H₂"
+        },
+        {
+            question: "Hiện tượng nào xảy ra khi ngâm một lá kẽm (Zn) trong dung dịch đồng(II) sunfat (CuSO₄)?",
+            answers: ["A. Sủi bọt khí không màu", "B. Dung dịch chuyển sang màu xanh hơn", "C. Có lớp kim loại màu đỏ bám vào lá kẽm", "D. Không có hiện tượng gì"],
+            correct: "C. Có lớp kim loại màu đỏ bám vào lá kẽm"
+        },
+        {
+            question: "Vật liệu nào sau đây thường được dùng làm dây dẫn điện?",
+            answers: ["A. Bạc", "B. Vàng", "C. Nhôm", "D. Đồng"],
+            correct: "D. Đồng"
+        },
+        {
+            question: "Tính chất vật lý nào KHÔNG phải là tính chất chung của hầu hết kim loại?",
+            answers: ["A. Tính dẻo", "B. Có ánh kim", "C. Dẫn điện, dẫn nhiệt", "D. Có khối lượng riêng lớn"],
+            correct: "D. Có khối lượng riêng lớn"
+        },
+        {
+            question: "Phản ứng hóa học đặc trưng của kim loại là gì?",
+            answers: ["A. Dễ nhận electron", "B. Dễ nhường electron", "C. Dễ tham gia phản ứng thế", "D. Dễ bị oxi hóa"],
+            correct: "B. Dễ nhường electron"
+        },
+        {
+            question: "Hòa tan hoàn toàn 5.6g Sắt (Fe) vào dung dịch HCl dư. Thể tích khí H₂ (đktc) thoát ra là bao nhiêu? (Cho Fe = 56)",
+            answers: ["A. 1.12 lít", "B. 2.24 lít", "C. 3.36 lít", "D. 4.48 lít"],
+            correct: "B. 2.24 lít"
+        },
+        {
+            question: "Cho 6.5g Kẽm (Zn) tác dụng hết với dung dịch H₂SO₄ loãng. Khối lượng muối ZnSO₄ thu được là bao nhiêu? (Cho Zn = 65, S = 32, O = 16)",
+            answers: ["A. 15.1g", "B. 16.1g", "C. 17.1g", "D. 18.1g"],
+            correct: "B. 16.1g"
+        }
+    ];
+
+    // --- KHỞI TẠO GIAO DIỆN ---
+
+    window.addEventListener('DOMContentLoaded', () => {
+        // Sự kiện cho màn hình mở đầu
+        startBtn.addEventListener('click', () => {
+            coverPage.classList.add('opacity-0', 'pointer-events-none');
+            mainContent.classList.remove('hidden');
+            setTimeout(() => coverPage.classList.add('hidden'), 500);
+        });
+        closeAdBtn.addEventListener('click', () => {
+            adContainer.style.display = 'none';
+        });
+
+        // Sự kiện cho Tabs
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabNum = tab.dataset.tab;
+                
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+
+                tabContents.forEach(content => {
+                    content.classList.add('hidden');
+                });
+                document.getElementById(`tab-content-${tabNum}`).classList.remove('hidden');
+            });
+        });
+
+        // Sự kiện cho Modal
+        openModalABtn.addEventListener('click', () => {
+            modalTitle.innerText = "Thí nghiệm đốt cháy kim loại";
+            modalIframe.src = "https://u.nobook.com/short-link/d842z6la";
+            modal.classList.remove('hidden');
+        });
+        openModalBBtn.addEventListener('click', () => {
+            modalTitle.innerText = "Thí nghiệm kim loại tác dụng với nước";
+            modalIframe.src = "https://u.nobook.com/short-link/ysp1bluq";
+            modal.classList.remove('hidden');
+        });
+        openModalCBtn.addEventListener('click', () => {
+            modalTitle.innerText = "Thí nghiệm kim loại tác dụng với acid";
+            modalIframe.src = "https://u.nobook.com/short-link/5mhlbpbo";
+            modal.classList.remove('hidden');
+        });
+        openModalDBtn.addEventListener('click', () => {
+            modalTitle.innerText = "Thí nghiệm kim loại tác dụng với muối";
+            modalIframe.src = "https://u.nobook.com/short-link/rjpqlw11";
+            modal.classList.remove('hidden');
+        });
+        closeModalBtn.addEventListener('click', () => {
+            modal.classList.add('hidden');
+            modalIframe.src = ""; // Dừng thí nghiệm khi đóng
+        });
+
+        // Sự kiện cho Quiz
+        startQuizBtn.addEventListener('click', startQuiz);
+        
+        // Vẽ mô phỏng SVG cho tab 1
+        createPhysicalSVG();
+    });
+
+    // --- LOGIC QUIZ ---
+
+    function startQuiz() {
+        studentName = studentNameInput.value.trim();
+        if (studentName === "") {
+            nameError.classList.remove('hidden'); // Show error message instead of alert
+            return;
+        }
+        nameError.classList.add('hidden'); // Hide error message if name is provided
+        quizStartScreen.classList.add('hidden');
+        quizContainer.classList.remove('hidden');
+        currentQuestionIndex = 0;
+        score = 0;
+        userAnswers = [];
+        loadQuestion();
+    }
+
+    function loadQuestion() {
+        if (currentQuestionIndex < quizData.length) {
+            const currentQuestion = quizData[currentQuestionIndex];
+            questionText.innerHTML = `Câu ${currentQuestionIndex + 1}: ${currentQuestion.question}`;
+            answersContainer.innerHTML = '';
+            currentQuestion.answers.forEach(answer => {
+                const button = document.createElement('button');
+                button.innerHTML = answer;
+                // (FIXED) Apply all utility classes directly
+                button.className = 'quiz-option-btn p-4 bg-slate-100 rounded-lg text-left transition-all duration-300 border-2 border-transparent cursor-pointer';
+                button.onclick = () => selectAnswer(answer, button);
+                answersContainer.appendChild(button);
+            });
+        } else {
+            showResults();
+        }
+    }
+
+    function selectAnswer(selectedAnswer, button) {
+        const currentQuestion = quizData[currentQuestionIndex];
+        const isCorrect = selectedAnswer === currentQuestion.correct;
+        
+        userAnswers.push({
+            question: currentQuestion.question,
+            selected: selectedAnswer,
+            correct: currentQuestion.correct,
+            isCorrect: isCorrect
+        });
+
+        if (isCorrect) {
+            score++;
+            button.classList.add('correct');
+        } else {
+            button.classList.add('incorrect');
+            // Highlight the correct answer
+            Array.from(answersContainer.children).forEach(btn => {
+                if (btn.innerHTML === currentQuestion.correct) {
+                    btn.classList.add('correct');
+                }
+            });
+        }
+
+        // Disable all buttons after selection
+        Array.from(answersContainer.children).forEach(btn => btn.disabled = true);
+
+        setTimeout(() => {
+            currentQuestionIndex++;
+            loadQuestion();
+        }, 1500); // Wait 1.5s before next question
+    }
+
+    function showResults() {
+        quizContainer.classList.add('hidden');
+        quizResultsScreen.classList.remove('hidden');
+
+        const percentage = (score / quizData.length) * 100;
+        document.getElementById('result-summary').innerText = `Kết quả của ${studentName}`;
+        document.getElementById('result-details').innerHTML = `Em đã đúng <span class="font-bold text-emerald-600">${score} / ${quizData.length}</span> câu (${percentage.toFixed(1)}%)`;
+
+        let comment = '';
+        if (percentage === 100) {
+            comment = "Xuất sắc! Thầy rất tự hào về em. Em đã nắm vững kiến thức một cách tuyệt vời!";
+        } else if (percentage >= 80) {
+            comment = "Rất tốt! Em đã hiểu bài rất chắc chắn. Cố gắng thêm một chút nữa để đạt điểm tuyệt đối nhé!";
+        } else if (percentage >= 50) {
+            comment = "Khá lắm! Em đã có những kiến thức cơ bản rồi. Hãy xem lại những câu sai để rút kinh nghiệm nhé.";
+        } else {
+            comment = "Đừng buồn nhé! 'Thất bại là mẹ thành công'. Điều quan trọng là em đã nỗ lực. Cùng thầy xem lại bài và cố gắng hơn ở lần sau nào!";
+        }
+        document.getElementById('result-comment').innerText = comment;
+
+        // Trigger AI analysis and Google Sheet submission
+        analyzeAndSubmitResults();
+    }
+    
+    function restartQuiz() {
+        quizResultsScreen.classList.add('hidden');
+        quizStartScreen.classList.remove('hidden');
+        studentNameInput.value = '';
+        // Reset AI analysis content
+        document.getElementById('ai-analysis-content').innerHTML = `
+            <div class="flex items-center justify-center">
+                <svg class="animate-spin h-8 w-8 text-emerald-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <p class="ml-3">Đang phân tích bài làm của em, chờ thầy một chút nhé...</p>
+            </div>`;
+    }
+
+    // --- CHỨC NĂNG AI & GOOGLE SHEET ---
+
+    async function analyzeAndSubmitResults() {
+        const aiAnalysisContent = document.getElementById('ai-analysis-content');
+        
+        // 1. Generate AI Analysis
+        const prompt = `
+            Bạn là Thầy Lâm, một chuyên gia về môn Hóa Học.
+            Bạn CHỈ được phân tích kết quả bài làm của học sinh lớp 9 về chủ đề các tính chất của kim loại.
+            Hãy đưa ra nhận xét chi tiết, bao gồm lời khen, chỉ ra điểm cần cải thiện và động viên học sinh một cách gần gũi, khích lệ.
+            
+            Dưới đây là kết quả bài làm của học sinh tên "${studentName}":
+            - Điểm số: ${score}/${quizData.length}
+            - Chi tiết các câu trả lời:
+            ${userAnswers.map((ans, index) => 
+                `Câu ${index + 1}: ${ans.question}\n  - Em chọn: ${ans.selected}\n  - Đáp án đúng: ${ans.correct}\n  - Kết quả: ${ans.isCorrect ? 'Đúng' : 'Sai'}`
+            ).join('\n')}
+
+            Dựa vào đây, hãy phân tích:
+            1.  **Điểm mạnh:** Khen ngợi những phần kiến thức học sinh đã nắm vững (dựa vào các câu trả lời đúng).
+            2.  **Điểm cần cải thiện:** Chỉ ra cụ thể những lỗ hổng kiến thức (dựa vào các câu trả lời sai). Ví dụ: "Thầy thấy em hơi nhầm lẫn ở phần tính toán mol..." hoặc "Em cần xem lại dãy hoạt động hóa học nhé!".
+            3.  **Lời khuyên và động viên:** Đưa ra lời khuyên cụ thể để cải thiện và kết thúc bằng một lời động viên ấm áp.
+
+            Hãy trình bày kết quả phân tích dưới dạng các mục rõ ràng, sử dụng markdown để định dạng (in đậm, gạch đầu dòng).
+        `;
+
+        try {
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+            });
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            const result = await response.json();
+            const analysisText = result.candidates[0].content.parts[0].text;
+            
+            // Display analysis
+            aiAnalysisContent.innerHTML = analysisText
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Bold
+                .replace(/\*/g, '•') // Bullets
+                .replace(/\n/g, '<br>');
+
+            // 2. Submit to Google Sheet
+            const submissionData = {
+                name: studentName,
+                score: score,
+                totalQuestions: quizData.length,
+                submittedAt: new Date().toLocaleString('vi-VN'),
+                analysis: analysisText // Send the raw text analysis
+            };
+            sendToGoogleSheet(submissionData);
+
+        } catch (error) {
+            console.error("Error during AI analysis:", error);
+            aiAnalysisContent.innerHTML = "Rất tiếc, đã có lỗi xảy ra khi phân tích bài làm. Em hãy thử lại sau nhé.";
+        }
+    }
+
+    async function sendToGoogleSheet(data) {
+        try {
+            await fetch(GOOGLE_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors', // Important for simple deployment
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            });
+            console.log("Kết quả đã được gửi thành công đến Google Sheet.");
+        } catch (error) {
+            console.error("Lỗi khi gửi dữ liệu đến Google Sheet:", error);
+        }
+    }
+    
+    async function askAI(tabNumber) {
+        const promptText = document.getElementById(`ai-prompt-${tabNumber}`).value;
+        const responseDiv = document.getElementById(`ai-response-${tabNumber}`);
+
+        if (!promptText) {
+            responseDiv.innerText = "Em hãy nhập câu hỏi vào ô nhé!";
+            return;
+        }
+
+        responseDiv.innerHTML = '<p class="text-slate-500 italic">Thầy đang suy nghĩ câu trả lời...</p>';
+
+        let contextPrompt = `
+            Bạn là Thầy Lâm, một chuyên gia về môn Hóa học với phong cách gần gũi, sâu sắc.
+            Bạn CHỈ được trả lời các câu hỏi liên quan chặt chẽ đến chủ đề của bài giảng là "tính chất của kim loại".
+            Nếu người dùng hỏi về các chủ đề không liên quan (ví dụ: toán, lịch sử, phim ảnh, các chủ đề hóa học khác...), bạn BẮT BUỘC phải từ chối một cách khéo léo và hài hước. Ví dụ: "Ôi, câu hỏi này hay quá nhưng lại nằm ngoài chuyên môn 'kim loại' của thầy hôm nay rồi. Để dành cho buổi học khác nhé, giờ chúng ta tập trung vào các bạn kim loại đã nào!".
+
+            Câu hỏi của học sinh: "${promptText}"
+        `;
+        
+        if (tabNumber === 1) {
+            contextPrompt += '\nChủ đề cụ thể của phần này là TÍNH CHẤT VẬT LÝ của kim loại (tính dẻo, dẫn điện, dẫn nhiệt, ánh kim). Hãy tập trung vào đó.';
+        } else if (tabNumber === 2) {
+            contextPrompt += '\nChủ đề cụ thể của phần này là TÍNH CHẤT HÓA HỌC của kim loại (tác dụng với phi kim, nước, axit, muối). Hãy tập trung vào đó.';
+        }
+
+        try {
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ contents: [{ parts: [{ text: contextPrompt }] }] })
+            });
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            const result = await response.json();
+            const aiText = result.candidates[0].content.parts[0].text;
+            responseDiv.innerHTML = aiText.replace(/\n/g, '<br>');
+
+        } catch (error) {
+            console.error("Lỗi khi gọi Gemini API:", error);
+            responseDiv.innerText = "Rất tiếc, thầy đang bận một chút, em hãy thử lại sau nhé!";
+        }
+    }
+
+
+    // --- SVG ANIMATIONS ---
+
+    function createPhysicalSVG() {
+        const container = document.getElementById('svg-container-1');
+        const svgNS = "http://www.w3.org/2000/svg";
+        const svg = document.createElementNS(svgNS, "svg");
+        svg.setAttribute('viewBox', '0 0 200 100');
+        svg.setAttribute('class', 'w-full h-full');
+
+        // Tạo các ion dương
+        for (let i = 0; i < 5; i++) {
+            for (let j = 0; j < 3; j++) {
+                const circle = document.createElementNS(svgNS, 'circle');
+                circle.setAttribute('cx', 25 + i * 35);
+                circle.setAttribute('cy', 20 + j * 30);
+                circle.setAttribute('r', 8);
+                circle.setAttribute('fill', '#34d399');
+                svg.appendChild(circle);
+            }
+        }
+
+        // Tạo các electron tự do
+        for (let i = 0; i < 10; i++) {
+            const electron = document.createElementNS(svgNS, 'circle');
+            const startX = Math.random() * 200;
+            const startY = Math.random() * 100;
+            electron.setAttribute('cx', startX);
+            electron.setAttribute('cy', startY);
+            electron.setAttribute('r', 3);
+            electron.setAttribute('fill', '#facc15');
+            electron.setAttribute('class', 'electron');
+            electron.style.animationDelay = `${Math.random() * 4}s`;
+            svg.appendChild(electron);
+        }
+        container.appendChild(svg);
+    }
+
+    </script>
+</body>
+</html>
